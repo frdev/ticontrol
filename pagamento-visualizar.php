@@ -16,7 +16,7 @@ $db->join('empresas e', 'e.id=p.empresa_id');
 $db->join('pagamentos_chamados pc', 'pc.pagamento_id=p.id');
 $db->join('chamados c', 'pc.chamado_id=c.id');
 $db->where('p.id', $pagamento_id);
-$pagamento = $db->get('pagamentos p', null, 'p.data, SUM(c.valor) as valor, p.periodo_ini, p.periodo_fim');
+$pagamento = $db->get('pagamentos p', null, 'p.data, SUM(c.valor) as valor, p.periodo_ini, p.periodo_fim, p.comprovante');
 
 # Contador dos pagtos
 $db->where('p.id', $pagamento_id);
