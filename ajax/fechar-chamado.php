@@ -41,47 +41,46 @@ if(isset($_FILES) && $_FILES['rat_fechamento']['size'] > 0 && $_FILES['foto1']['
                 $db->where('empresa_id', $chamado['empresa_open_id']);
                 $db->orWhere('empresa_id', $chamado['empresa_close_id']);
                 $usuarios  = $db->get('usuarios', null, array('nome, email'));
-                // if(!empty($chamado)){
-                //     $mail = new PHPMailer(true);
-                //     try {
-                //         $data  = date('d/m/Y', strtotime($chamado['data_atendimento']));
-                //         $body  = "<h3><strong>Fechamento - Chamado {$chamado['numero']} - {$data}</strong></h3>";
-                //         $body .= "<p><strong>Horário de atendimento realizado:</strong> {$dados['inicio_at']} às {$dados['fim_at']}</p>";
-                //         $body .= "<p><strong>Resumo Fechamento:</strong> {$dados['obs_close']}</p>";
-                //         $body .= "<p>O chamado foi atendido e encontra-se finalizado.</p>";
-                //         $body .= "<p>Área de login: Clique <a href='http://os.infolinn.com.br/'>aqui</a></p>";
-                //         $body .= "<p>----------------------------------------------------------------------------------</p>";
-                //         $body .= "<p>Este é um e-mail de aviso automático, por gentileza, não responda!</p>";
-                //         $body .= "<p>----------------------------------------------------------------------------------</p>";
-                //         //Server settings
-                //         $mail->isSMTP();                                      // Set mailer to use SMTP
-                //         $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-                //         $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                //         $mail->Username = 'no-reply@infolinn.com.br';                 // SMTP username
-                //         $mail->Password = 'info@2017';                           // SMTP password
-                //         // $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
-                //         $mail->Port = 587;                                    // TCP port to connect to
-                //         //Recipients
-                //         $mail->setFrom('no-reply@infolinn.com', 'No-reply');
-                //         if(!empty($usuarios)){
-                //             foreach($usuarios as $usuario){
-                //                 $mail->addAddress($usuario['email'], $usuario['nome']);
-                //             }     // Add a recipient
-                //         }
-                //         $mail->addCC('chamados@infolinn.com.br');
-                //         //Content
-                //         $mail->isHTML(true);                                  // Set email format to HTML
-                //         $mail->Subject = 'TI Control - Infolinn - Fechamento - ' . $chamado['numero'];
-                //         $mail->Body    = $body;
-                //         $mail->addAttachment('../fechamentos/'.$arq_fechamento);
-                //         $mail->addAttachment('../fechamentos/'.$arq_foto1);
-                //         $mail->addAttachment('../fechamentos/'.$arq_foto2);
-                //         $mail->send();
-                //     } catch (Exception $e) {
-                //         $retorno['message'] = "<br><div class='alert alert-danger text-center'>{$mail->ErrorInfo}</div><br>";
-                //         $retorno['success'] = false;
-                //     }
-                // }
+                if(!empty($chamado)){
+                    $mail = new PHPMailer(true);
+                    try {
+                        $data  = date('d/m/Y', strtotime($chamado['data_atendimento']));
+                        $body  = "<h3><strong>Fechamento - Chamado {$chamado['numero']} - {$data}</strong></h3>";
+                        $body .= "<p><strong>Horário de atendimento realizado:</strong> {$dados['inicio_at']} às {$dados['fim_at']}</p>";
+                        $body .= "<p><strong>Resumo Fechamento:</strong> {$dados['obs_close']}</p>";
+                        $body .= "<p>O chamado foi atendido e encontra-se finalizado.</p>";
+                        $body .= "<p>Área de login: Clique <a href='http://os.infolinn.com.br/'>aqui</a></p>";
+                        $body .= "<p>----------------------------------------------------------------------------------</p>";
+                        $body .= "<p>Este é um e-mail de aviso automático, por gentileza, não responda!</p>";
+                        $body .= "<p>----------------------------------------------------------------------------------</p>";
+                        $mail->isSMTP();                                      // Set mailer to use SMTP
+                        $mail->Host = 'a2plcpnl0260.prod.iad2.secureserver.net';  // Specify main and backup SMTP servers
+                        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+                        $mail->Username = 'wvdc7erhikrf';                 // SMTP username
+                        $mail->Password = 'Dime@001508';                           // SMTP password
+                        $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+                        $mail->Port = 465;                                    // TCP port to connect to
+                        //Recipients
+                        $mail->setFrom('no-reply@frdevpro.com', 'No-reply');
+                        if(!empty($usuarios)){
+                            foreach($usuarios as $usuario){
+                                $mail->addAddress($usuario['email'], $usuario['nome']);
+                            }     // Add a recipient
+                        }
+                        $mail->addCC('felipertw2@gmail.com');
+                        //Content
+                        $mail->isHTML(true);                                  // Set email format to HTML
+                        $mail->Subject = 'IT Control - Fechamento - ' . $chamado['numero'];
+                        $mail->Body    = $body;
+                        $mail->addAttachment('../fechamentos/'.$arq_fechamento);
+                        $mail->addAttachment('../fechamentos/'.$arq_foto1);
+                        $mail->addAttachment('../fechamentos/'.$arq_foto2);
+                        $mail->send();
+                    } catch (Exception $e) {
+                        $retorno['message'] = "<br><div class='alert alert-danger text-center'>{$mail->ErrorInfo}</div><br>";
+                        $retorno['success'] = false;
+                    }
+                }
             } else {
                 $retorno['message'] = "<div class='alert alert-danger text-center'>Erro ao atualizar chamado.</div>";
                 $retorno['success'] = false;

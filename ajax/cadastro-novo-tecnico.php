@@ -53,7 +53,7 @@ if(empty($existEmpresa)){ # Caso não exista, segue para atualização/cadastra
         }
         $mail = new PHPMailer(true);
         try {
-            $body  = "<h3><strong>TI Control - Infolinn - Cadastro Efetivado</h3>";
+            $body  = "<h3><strong>IT Control - Cadastro Efetivado</h3>";
             $body .= "<p>Seu cadastro no sistema TI Control - Infolinn foi efetivado com sucesso.</p>
             ";
             $body .= "<p><strong>Usuário:</strong> {$cpf}</p>";
