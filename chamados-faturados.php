@@ -1,7 +1,7 @@
 <?php
 # Importar Header
 include_once 'includes/header.php';
-if($_SESSION['tipo_empresa_id'] != 1 && $_SESSION['nivel_acesso_id'] != 1){ session_destroy(); header("Location: index.php?mensagem=Usuário sem permissão, realize login novamente.&tipo=danger"); }
+if($_SESSION['tipo_empresa_id'] == 2){ session_destroy(); header("Location: index.php?mensagem=Usuário sem permissão, realize login novamente.&tipo=danger"); }
 
 $db       = new MysqliDb();
 
