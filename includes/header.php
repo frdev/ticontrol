@@ -42,32 +42,32 @@ require_once 'functions/session.php';
                             if($_SESSION['nivel_acesso_id'] == 1){
                         ?>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administração <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog" aria-hidden="true"></i> Administração <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="usuarios.php">Usuários</a></li>
-                                <li><a href="empresas.php">Empresas</a></li>
-                                <li><a href="projetos.php">Projetos</a></li>
-                                <li><a href="efetuar-pagamentos.php">Efetuar Pagamentos - Técnicos</a></li>
+                                <li><a href="usuarios.php"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Usuários</a></li>
+                                <li><a href="empresas.php"> <i class="fa fa-building-o" aria-hidden="true"></i> Empresas</a></li>
+                                <li><a href="projetos.php"><i class="fa fa-laptop" aria-hidden="true"></i> Projetos</a></li>
+                                <li><a href="efetuar-pagamentos.php"><i class="fa fa-money" aria-hidden="true"></i> Efetuar Pagamentos - Técnicos</a></li>
                             </ul>
                         </li>
                         <?php
                             }
                         ?>
-                        <li><a href="chamados.php">Chamados</a></li>
+                        <li><a href="chamados.php"><i class="fa fa-clipboard"></i> Chamados</a></li>
                         <?php
                         if($_SESSION['tipo_empresa_id'] != 2){
                         ?>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Faturamento <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-money" aria-hidden="true"></i> Faturamento <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="faturamento.php">Informativo</a></li>
-                                <li><a href="chamados-faturados.php">Faturados</a></li>
+                                <li><a href="faturamento.php"><i class="fa fa-info-circle" aria-hidden="true"></i> Informativo</a></li>
+                                <li><a href="chamados-faturados.php"><i class="fa fa-usd" aria-hidden="true"></i> Faturados</a></li>
                             </ul>
                         </li>
                         <?php
                         }
                         ?>
-                        <li><a href="https://drive.google.com/drive/folders/1l-bOZ1uGtaZcPwkdRezQ2Sf177tL8qqB" target="_blank">RAT's e Manuais</a></li>
+                        <li><a href="chamados.php" target="_blank"><i class="fa fa-file-archive-o" aria-hidden="true"></i> RAT's e Manuais</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#"><i class="fa fa-user-circle-o" aria-hidden="true"></i> <?= $_SESSION['login']; ?></a></li>

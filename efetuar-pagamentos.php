@@ -128,7 +128,7 @@ $pagamentos = $db->arraybuilder()->paginate('pagamentos p', $pag, 'p.*, e.nome_f
                         </thead>
                         <tbody>
                             <?php
-                            if(!empty($pagamentos)){
+                            if(!empty($pagamentos[0])){
                                 foreach($pagamentos as $pagamento){
                             ?>
                                 <tr>
