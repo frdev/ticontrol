@@ -61,7 +61,13 @@ require_once 'functions/session.php';
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-money" aria-hidden="true"></i> Faturamento <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="faturamento.php"><i class="fa fa-info-circle" aria-hidden="true"></i> Informativo</a></li>
+                                <?php
+                                if($_SESSION['tipo_empresa_id'] == 3){
+                                ?>
                                 <li><a href="chamados-faturados.php"><i class="fa fa-usd" aria-hidden="true"></i> Faturados</a></li>
+                                <?php
+                                }
+                                ?>
                             </ul>
                         </li>
                         <?php
