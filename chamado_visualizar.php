@@ -14,7 +14,7 @@ $db->join("status_chamados s", "s.id=c.status_id");
 $db->join("state uf", "uf.id=c.state_id");
 $db->join("city cidade", "cidade.id=c.city_id");
 $db->join("periodos_chamados pc", "pc.id=c.periodo_id");
-$db->join("pagamentos_chamados pag", "pag.chamado_id=c.id");
+$db->join("pagamentos_chamados pag", "pag.chamado_id=c.id", "LEFT");
 $campos  = "c.*, p.descricao as p_descricao, p.rat, eo.nome_fantasia as eo_nome, ec.nome_fantasia as ec_nome, sv.descricao as sv_descricao, pr.descricao as pr_descricao, s.descricao as s_descricao, uf.abbreviation as uf, cidade.name as cidade, pc.descricao as pc_descricao, pag.pagamento_id";
 # Recupera dados do chamado em caso de edição
 $db->where('c.id', $_GET['id']);
