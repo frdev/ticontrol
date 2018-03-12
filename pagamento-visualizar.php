@@ -44,7 +44,7 @@ $chamados       = $db->arraybuilder()->paginate('chamados c', $pag, 'c.*');
                 <div class="panel-heading" style="color: #fff; background-color: #000; border-color: #000;">
                     <h4><i class="fa fa-shopping-bag"></i> Chamados pagos - <?=date('d/m/Y', strtotime($pagamento[0]['data']))?> - Valor: R$<?=number_format($pagamento[0]['valor'], 2, ',', '.')?> - Total chamados - <?=count($count_chamados)?>
                         <br><br>
-                        <i class="fa fa-calendar"></i> Período: <?=date('d/m/Y', strtotime($pagamento[0]['periodo_ini']))?> à <?=date('d/m/Y', strtotime($pagamento[0]['periodo_fim']))?>
+                        <i class="fa fa-calendar"></i> Período: <?=date('d/m/Y', strtotime($pagamento[0]['periodo_ini']))?> à <?=date('d/m/Y', strtotime($pagamento[0]['periodo_fim']))?> - Comprovante: <a href="comprovantes/<?=$pagamento[0]['comprovante']?>">[Download]</a>
                     </h4>
                 </div>
                 <div class="panel-body">
