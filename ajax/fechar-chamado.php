@@ -6,12 +6,16 @@ use PHPMailer\PHPMailer\Exception;
 # Importar Configurações
 require_once '../libs/MysqliDb.php';
 require      '../vendor/autoload.php';
+    echo "<pre>";
+    print_r($_FILES);
+    echo "</pre>";
+    exit();
 $dados = $_POST;
 $db    = new MysqliDb();
 $db->where('id', $dados['id']);
 $chamado = $db->getOne('chamados');
 # Valida se os arquivos files sao compativeis
-if(isset($_FILES) && $_FILES['rat_fechamento']['size'] > 0 && $_FILES['foto1']['size'] > 0 && $_FILES['foto2']['size'] > 0){
+if(isset($_FILES) && $_FILES['rat_fechamento']['size'] > 0){
     $extensoes_aceitas   = array('pdf' , 'png', 'jpeg', 'jpg');
     $extensao_fechamento = explode('.', $_FILES['rat_fechamento']['name']);
     $extensao_fechamento = strtolower(end($extensao_fechamento));

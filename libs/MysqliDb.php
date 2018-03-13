@@ -234,7 +234,7 @@ class MysqliDb
      * @param string $charset
      * @param string $socket
      */
-    public function __construct($host = 'localhost', $username = 'feliperistow', $password = 'feristow1508', $db = 'ticontrol', $port = 3306, $charset = 'utf8', $socket = null)
+    public function __construct($host = 'localhost', $username = 'root', $password = '', $db = 'ticontrol', $port = 3306, $charset = 'utf8', $socket = null)
     {
         $isSubQuery = false;
 

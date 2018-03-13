@@ -175,27 +175,28 @@ if(isset($_GET['id'])){
                         <?php
                         }
                         ?>
-                        <?php 
-                            if($_SESSION['tipo_empresa_id'] == 1){
-                        ?>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group" style="margin-top: 14px;">
                                     <label class="control-label col-md-2 text-right" for="valor" style="padding-top: 7px;">Valor:</label>
                                     <div class="col-md-4 text-left" style="margin-bottom: 10px;">
+                                    <?php 
+                                    if($_SESSION['tipo_empresa_id'] == 1){
+                                    ?>
                                         <input type="text" name="valor" id="valor" class="form-control" value="<?= $editMode && !empty($chamado['valor'])? $chamado['valor'].',00' : ''; ?>" placeholder="R$ 0,00" data-mask="0000,00" data-mask-reverse="true" required <?= $editMode && $_SESSION['tipo_empresa_id'] == 3 ? 'readonly' : ''?>/>
                                     </div>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                                 <div class="form-group" style="margin-top: -7px;">
-                                    <label class="control-label col-md-2 text-right" for="cep" style="padding-top: 7px;"></label>
+                                    <label class="control-label col-md-2 text-right" for="cep" style="padding-top: 7px;">Recebido:</label>
                                     <div class="col-md-4 text-left" style="margin-bottom: 10px;">
+                                        <input type="text" name="valor" id="valor" class="form-control" value="<?= $editMode && !empty($chamado['valor'])? $chamado['valor'].',00' : ''; ?>" placeholder="R$ 0,00" data-mask="0000,00" data-mask-reverse="true" required <?= $editMode && $_SESSION['tipo_empresa_id'] == 3 ? 'readonly' : ''?>/>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <?php
-                            }
-                        ?>
                         <div class="form-group" >
                             <label class="control-label col-md-2 text-right" for="nome_cliente" style="padding-top: 14px;">Cliente:</label>
                             <div class="col-md-10" style="margin-bottom: 10px;">

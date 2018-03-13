@@ -27,7 +27,7 @@ if(!empty($dados['rel_empresa'])){
 }
 $db->where('c.data_atendimento', $dados['rel_data_ini'], '>=');
 $db->where('c.data_atendimento', $dados['rel_data_fim'], '<=');
-$db->where('c.status_id', '!=', 1);
+$db->where('c.status_id', 1, '!=');
 $db->join("projetos p", "p.id=c.projeto_id");
 $db->join("empresas eo", "eo.id=c.empresa_open_id", "LEFT");
 $db->join("empresas ec", "ec.id=c.empresa_close_id", "LEFT");

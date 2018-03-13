@@ -207,7 +207,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                     <?php if($_SESSION['tipo_empresa_id'] != 2){ ?>
                                     <td style="vertical-align: middle !important;"><?= number_format($chamado['valor'], 2, ',', '.'); ?></td>
                                     <?php } ?>
-                                    <td style="vertical-align: middle !important;"><?= $chamado['s_descricao'] ?></td>
+                                    <td style="vertical-align: middle !important;"><?= $_SESSION['tipo_empresa_id'] == 2 && $chamado['status_id'] == 7? 'Fechado' : $chamado['s_descricao']; ?></td>
                                     <td style="vertical-align: middle !important;">
                                         <a href="chamado_visualizar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-default" title="Visualizar"><i class="fa fa-search-plus"></i></a>
                                         <?php

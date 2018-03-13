@@ -31,39 +31,25 @@ $dados['status_id'] = !empty($dados['id']) ? $dados['status_id'] : 1;
 
 # Atualiza
 if(!empty($dados['id'])){
+    $chamado = array(
+        'numero'           => $dados['numero'],
+        'projeto_id'       => $dados['projeto_id'],
+        'prioridade_id'    => $dados['prioridade_id'],
+        'servico_id'       => $dados['servico_id'],
+        'status_id'        => $dados['status_id'],
+        'nome_cliente'     => $dados['nome_cliente'],
+        'data_atendimento' => $dados['data_atendimento'],
+        'periodo_id'       => $dados['periodo_id'],
+        'logradouro'       => $dados['logradouro'],
+        'state_id'         => $dados['state_id'],
+        'city_id'          => $dados['city_id'],
+        'obs_at'           => $dados['obs_at']
+    );
     if($_SESSION['tipo_empresa_id'] == 1){
-        $chamado = array(
-            'numero'           => $dados['numero'],
-            'empresa_open_id'  => $dados['empresa_open_id'],
-            'empresa_close_id' => $dados['empresa_close_id'],
-            'projeto_id'       => $dados['projeto_id'],
-            'prioridade_id'    => $dados['prioridade_id'],
-            'servico_id'       => $dados['servico_id'],
-            'status_id'        => $dados['status_id'],
-            'valor'            => intval($dados['valor']),
-            'nome_cliente'     => $dados['nome_cliente'],
-            'data_atendimento' => $dados['data_atendimento'],
-            'periodo_id'       => $dados['periodo_id'],
-            'logradouro'       => $dados['logradouro'],
-            'state_id'         => $dados['state_id'],
-            'city_id'          => $dados['city_id'],
-            'obs_at'           => $dados['obs_at']
-        );
-    } else {
-        $chamado = array(
-            'numero'           => $dados['numero'],
-            'projeto_id'       => $dados['projeto_id'],
-            'prioridade_id'    => $dados['prioridade_id'],
-            'servico_id'       => $dados['servico_id'],
-            'status_id'        => $dados['status_id'],
-            'nome_cliente'     => $dados['nome_cliente'],
-            'data_atendimento' => $dados['data_atendimento'],
-            'periodo_id'       => $dados['periodo_id'],
-            'logradouro'       => $dados['logradouro'],
-            'state_id'         => $dados['state_id'],
-            'city_id'          => $dados['city_id'],
-            'obs_at'           => $dados['obs_at']
-        );
+        $chamado['valor'] = intval($dados['valor']);
+    }
+    if($_SESSION['tipo_empresa_id'] != 2){
+        $chamado['valor_recebido'] = intval($dados['valor_recebido']);   
     }
     $db->where('id', $dados['id']);
     if($db->update('chamados', $chamado)){
@@ -117,40 +103,29 @@ if(!empty($dados['id'])){
     }
 # Cadastra
 } else {
+    $chamado = array(
+        'numero'           => $dados['numero'],
+        'projeto_id'       => $dados['projeto_id'],
+        'prioridade_id'    => $dados['prioridade_id'],
+        'servico_id'       => $dados['servico_id'],
+        'status_id'        => $dados['status_id'],
+        'empresa_open_id'  => $_SESSION['empresa_id'],
+        'nome_cliente'     => $dados['nome_cliente'],
+        'data_atendimento' => $dados['data_atendimento'],
+        'periodo_id'       => $dados['periodo_id'],
+        'logradouro'       => $dados['logradouro'],
+        'state_id'         => $dados['state_id'],
+        'city_id'          => $dados['city_id'],
+        'obs_at'           => $dados['obs_at']
+    );
     if($_SESSION['tipo_empresa_id'] == 1){
-        $chamado = array(
-            'numero'           => $dados['numero'],
-            'projeto_id'       => $dados['projeto_id'],
-            'prioridade_id'    => $dados['prioridade_id'],
-            'servico_id'       => $dados['servico_id'],
-            'status_id'        => 2,
-            'empresa_open_id'  => $dados['empresa_open_id'],
-            'empresa_close_id' => $dados['empresa_close_id'],
-            'valor'            => intval($dados['valor']),
-            'nome_cliente'     => $dados['nome_cliente'],
-            'data_atendimento' => $dados['data_atendimento'],
-            'periodo_id'       => $dados['periodo_id'],
-            'logradouro'       => $dados['logradouro'],
-            'state_id'         => $dados['state_id'],
-            'city_id'          => $dados['city_id'],
-            'obs_at'           => $dados['obs_at']
-        );
-    } else {
-        $chamado = array(
-            'numero'           => $dados['numero'],
-            'projeto_id'       => $dados['projeto_id'],
-            'prioridade_id'    => $dados['prioridade_id'],
-            'servico_id'       => $dados['servico_id'],
-            'status_id'        => $dados['status_id'],
-            'empresa_open_id'  => $_SESSION['empresa_id'],
-            'nome_cliente'     => $dados['nome_cliente'],
-            'data_atendimento' => $dados['data_atendimento'],
-            'periodo_id'       => $dados['periodo_id'],
-            'logradouro'       => $dados['logradouro'],
-            'state_id'         => $dados['state_id'],
-            'city_id'          => $dados['city_id'],
-            'obs_at'           => $dados['obs_at']
-        );
+        $chamado['valor']            = intval($dados['valor']);
+        $chamado['empresa_open_id']  = $dados['empresa_open_id'];
+        $chamado['empresa_close_id'] = $dados['empresa_close_id'];
+    }
+    if($_SESSION['tipo_empresa_id'] != 2){
+        $chamado['valor_recebido']   = intval($dados['valor_recebido']); 
+        $chamado['status']           = 2;  
     }
     $chamadoId = $db->insert('chamados', $chamado);
     if($chamadoId){
