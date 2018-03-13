@@ -33,9 +33,6 @@ if(!empty($_GET['tipo_filtro']) && (!empty($_GET['filtro']) || !empty($_GET['dat
         case 'chamado':
             $db->where('c.numero', "%{$filtro}%", 'like');
             break;
-        case 'status':
-            $db->where('s.descricao', "%{$filtro}%", 'like');
-            break;
         case 'parceiro':
             $db->where('eo.nome_fantasia', "%{$filtro}%", 'like');
             break;
@@ -101,7 +98,6 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                     <select class="selectpicker" name="tipo_filtro" id="tipo_filtro">
                                         <option value="">Selecione filtro</option>
                                         <option value="chamado" <?= isset($tipo_filtro) && $tipo_filtro == 'chamado' ? 'selected' : ''; ?>>Chamado</option>
-                                        <option value="status" <?= isset($tipo_filtro) && $tipo_filtro == 'status' ? 'selected' : ''; ?>>Status</option>
                                         <option value="data" <?= isset($tipo_filtro) && $tipo_filtro == 'data' ? 'selected' : ''; ?>>Data Inicial e Final</option>
                                         <?php
                                             if($_SESSION['tipo_empresa_id'] == 1){

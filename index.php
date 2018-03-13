@@ -6,7 +6,7 @@
         <meta name="copyright" content="© 2018 Felipe Ristow" />
         <meta http-equiv="cache-control" content="no-cache" />
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <link rel="icon" type="imagem/png" href="img/infolinn-s-fav.png" />
+        <link rel="icon" type="imagem/png" href="img/fvicon.png" />
         <title>IT Control ®</title>
         <meta name="description" content="Tela de login para sistema de controle e gerenciamento de chamados de TI" />
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
