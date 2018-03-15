@@ -25,6 +25,7 @@ if($existChamado){
     $retorno['message'] = "<br><div class='alert alert-success text-center'>Chamado já existente.</div><br>";
     $retorno['success'] = false;
     echo json_encode($retorno);
+    exit();
 }
 
 $dados['status_id'] = !empty($dados['id']) ? $dados['status_id'] : 1; 

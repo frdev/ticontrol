@@ -1,7 +1,10 @@
 <?php
 # Importar Header
 include_once 'includes/header.php';
-
+if(empty($_SESSION)){
+    session_destroy();
+    header("Location: index.php?mensagem=Realize login novamente.&tipo=danger");
+}
 if(!isset($_GET['pag'])){
     $pag = 1;
 } else {
@@ -9,9 +12,6 @@ if(!isset($_GET['pag'])){
 }
 # Instancia DB
 $db = new MysqliDb();
-$db->where('tipo_empresa_id', 3);
-$db->orderBy('nome_fantasia', 'asc');
-$empresas = $db->get('empresas');
 # Monta os join's
 $db->join("projetos p", "p.id=c.projeto_id");
 $db->join("empresas eo", "eo.id=c.empresa_open_id", "LEFT");
@@ -32,6 +32,9 @@ if(!empty($_GET['tipo_filtro']) && (!empty($_GET['filtro']) || !empty($_GET['dat
     switch($_GET['tipo_filtro']){
         case 'chamado':
             $db->where('c.numero', "%{$filtro}%", 'like');
+            break;
+        case 'status':
+            $db->where('s.descricao', "%{$filtro}%", 'like');
             break;
         case 'parceiro':
             $db->where('eo.nome_fantasia', "%{$filtro}%", 'like');
@@ -67,7 +70,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
             <div class="row">
                 <div class="col-md-12">
                     <div class="pull-right">
-                        <a href="chamado_novo.php" class="btn btn-lg btn-primary" title="Novo Chamado"><strong><i class="fa fa-plus"></i></strong></a>
+                        <a href="chamado_novo.php" class="btn btn-lg btn-primary" title="Novo Chamado"><strong><i class="fa fa-plus"></i> Novo Chamado</strong></a>
                     </div>
                 </div>
             </div>
@@ -98,6 +101,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                     <select class="selectpicker" name="tipo_filtro" id="tipo_filtro">
                                         <option value="">Selecione filtro</option>
                                         <option value="chamado" <?= isset($tipo_filtro) && $tipo_filtro == 'chamado' ? 'selected' : ''; ?>>Chamado</option>
+                                        <option value="status" <?= isset($tipo_filtro) && $tipo_filtro == 'status' ? 'selected' : ''; ?>>Status</option>
                                         <option value="data" <?= isset($tipo_filtro) && $tipo_filtro == 'data' ? 'selected' : ''; ?>>Data Inicial e Final</option>
                                         <?php
                                             if($_SESSION['tipo_empresa_id'] == 1){
@@ -123,10 +127,16 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                         </form>
                     </div>
                     <hr style="color: #000;">
+                    <?php
+                    $db->where('tipo_empresa_id', 3);
+                    $db->orderBy('nome_fantasia', 'asc');
+                    $empresas_tecnicas = $db->get('empresas');
+                    if($_SESSION['tipo_empresa_id'] != 2){
+                    ?>
                     <div class="row">
                         <form id="formExcel" method="POST" action="ajax/gerar-excel.php">
                             <div class="form-group" style="margin-top: 15px;">
-                                <label class="control-label col-md-2 text-left" style="padding-top: 7px;"><i class='fa fa-file-excel-o'></i> Relatório:</label>
+                                <label class="control-label col-md-2 text-left" style="padding-top: 7px;"><i class='fa fa-file-excel-o'></i> Relatório Técnico:</label>
                                 <?php
                                 if($_SESSION['tipo_empresa_id'] == 1){
                                 ?>
@@ -134,7 +144,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                         <select class="selectpicker" name="rel_empresa" id="rel_empresa" required>
                                             <option value="">Selecione técnico</option>
                                             <?php
-                                            foreach($empresas as $empresa){
+                                            foreach($empresas_tecnicas as $empresa){
                                             ?>
                                                 <option value='<?=$empresa['id'];?>'><?=$empresa['nome_fantasia'];?></option>
                                             <?php
@@ -157,6 +167,53 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                             </div>
                         </form>
                     </div>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    $db->where('tipo_empresa_id', 2);
+                    $db->orderBy('nome_fantasia', 'asc');
+                    $empresas_parceiras = $db->get('empresas');
+                    if($_SESSION['tipo_empresa_id'] != 3){
+                    ?>
+                    <hr style="color: #000;">
+                    <div class="row">
+                        <form id="formExcel" method="POST" action="ajax/gerar-excel-parceiro.php">
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label class="control-label col-md-2 text-left" style="padding-top: 7px;"><i class='fa fa-file-excel-o'></i> Relatório Parceiro:</label>
+                                <?php
+                                if($_SESSION['tipo_empresa_id'] == 1){
+                                ?>
+                                    <div class="col-md-3" style="margin-bottom: 10px;">
+                                        <select class="selectpicker" name="rel_empresa" id="rel_empresa" required>
+                                            <option value="">Selecione técnico</option>
+                                            <?php
+                                            foreach($empresas_parceiras as $empresa){
+                                            ?>
+                                                <option value='<?=$empresa['id'];?>'><?=$empresa['nome_fantasia'];?></option>
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                                <div class="col-md-2" style="margin-bottom: 10px;">
+                                    <input type="date" name="rel_data_ini" id="data_ini" class="form-control" required/>
+                                </div>
+                                <div class="col-md-2" style="margin-bottom: 10px;">
+                                    <input type="date" name="rel_data_fim" id="data_fim" class="form-control" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="margin-bottom: 10px;">
+                                <button type="submit" class="btn btn-md btn-primary">Gerar Excel</button>
+                            </div>
+                        </form>
+                    </div>
+                    <?php
+                    }
+                    ?>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
@@ -170,8 +227,11 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 <td><strong>Local</strong></td>
                                 <td><strong>Data</strong></td>
                                 <td><strong>Período</strong></td>
+                                <?php if($_SESSION['tipo_empresa_id'] == 1){ ?>
+                                <td><strong>Valor</strong></td>
+                                <?php } ?>
                                 <?php if($_SESSION['tipo_empresa_id'] != 2){ ?>
-                                <td><strong>R$</strong></td>
+                                <td><strong>Pago</strong></td>
                                 <?php } ?>
                                 <td><strong>Status</strong></td>
                                 <td><strong>Ações</strong></td>
@@ -184,6 +244,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 ?>
                                 <tr>
                                     <?php
+                                        $data_atual = date('Y-m-d');
                                         $cor_status = '';
                                         if($chamado['prioridade_id'] == 2){
                                             $cor_status = "#0000CD";
@@ -191,23 +252,26 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                             $cor_status = "#FF0000";
                                         }
                                     ?>
-                                    <td style="vertical-align: middle !important; color: <?=$cor_status?>"><?= $chamado['numero'] ?></td>
-                                    <td style="vertical-align: middle !important;"><?= $chamado['p_descricao'] ?></td>
-                                    <td style="vertical-align: middle !important;"><?= !empty($chamado['p_logo'])? "<img src='logos-projetos/{$chamado['p_logo']}' style='width: 65px; height: 20px;'/>" : '-'?></td>
+                                    <td style="vertical-align: middle !important; color: <?=$cor_status?>"><?= strtotime($data_atual) == strtotime($chamado['data_atendimento']) ? '<strong><a href="chamado_novo.php?id='.$chamado['id'].'">'.$chamado['numero'].'</a></strong>' : '<a href="chamado_visualizar.php?id='.$chamado['id'].'">'.$chamado['numero'].'</a>' ?></td>
+                                    <td style="vertical-align: middle !important;"><?=$chamado['p_descricao']?></td>
+                                    <td style="vertical-align: middle !important;"><?= !empty($chamado['p_logo'])? "<img src='logos-projetos/{$chamado['p_logo']}' style='width: 55px; height: 25px;'/>" : '-'?></td>
                                     <?php if($_SESSION['tipo_empresa_id'] == 1){ ?>
                                     <td style="vertical-align: middle !important;"><?= !empty($chamado['empresa_close_id'])? $chamado['ec_nome'] : '-'?></td>
                                     <?php } ?>
                                     <td style="vertical-align: middle !important;"><?= $chamado['cidade'].'/'.$chamado['uf'] ?></td>
                                     <td style="vertical-align: middle !important;"><?= date('d/m/Y', strtotime($chamado['data_atendimento'])); ?></td>
                                     <td style="vertical-align: middle !important;"><?= $chamado['pc_descricao'] ?></td>
+                                    <?php if($_SESSION['tipo_empresa_id'] == 1){ ?>
+                                    <td style="vertical-align: middle !important;"><?= number_format($chamado['valor_recebido'], 2, ',', '.'); ?></td>
+                                    <?php } ?>
                                     <?php if($_SESSION['tipo_empresa_id'] != 2){ ?>
                                     <td style="vertical-align: middle !important;"><?= number_format($chamado['valor'], 2, ',', '.'); ?></td>
                                     <?php } ?>
-                                    <td style="vertical-align: middle !important;"><?= $_SESSION['tipo_empresa_id'] == 2 && $chamado['status_id'] == 7? 'Fechado' : $chamado['s_descricao']; ?></td>
+                                    <td style="vertical-align: middle !important;"><?= $chamado['s_descricao'] ?></td>
                                     <td style="vertical-align: middle !important;">
-                                        <a href="chamado_visualizar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-default" title="Visualizar"><i class="fa fa-search-plus"></i></a>
+                                        <a href="chamado_visualizar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-primary" title="Visualizar"><i class="fa fa-search-plus"></i></a>
                                         <?php
-                                        if($_SESSION['tipo_empresa_id'] != 3 && $chamado['status_id'] < 3){
+                                        if(($_SESSION['tipo_empresa_id'] != 3 && $chamado['status_id'] < 3) || $_SESSION['tipo_empresa_id'] == 1){
                                         ?>
                                             <a href="chamado_novo.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-default" title="Editar"><span class="glyphicon glyphicon-edit" title="Editar"></span></a>
                                         <?php
@@ -221,10 +285,9 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                             }
                                         ?>
                                         <?php
-                                        $data_atual = date('Y-m-d');
-                                        if($_SESSION['tipo_empresa_id'] != 2 && $chamado['status_id'] == 2 && strtotime($data_atual) == strtotime($chamado['data_atendimento'])){
+                                        if($_SESSION['tipo_empresa_id'] != 2 && $chamado['status_id'] == 2){
                                         ?>
-                                            <button data-id="<?= $chamado['id']; ?>" data-numero="<?= $chamado['numero']; ?>" class="btn btn-sm btn-default ematendimento" title="Colocar em Atendimento"><i class="fa fa-suitcase"></i></button>
+                                            <button data-id="<?= $chamado['id']; ?>" data-numero="<?= $chamado['numero']; ?>" class="btn btn-sm btn-warning ematendimento" title="Colocar em Atendimento"><i class="fa fa-suitcase"></i></button>
                                         <?php
                                             }
                                         ?>
@@ -232,14 +295,14 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                             $data_atual = date('Y-m-d');
                                             if($_SESSION['tipo_empresa_id'] != 2 && strtotime($data_atual) == strtotime($chamado['data_atendimento']) && $chamado['status_id'] == 6){
                                         ?>
-                                            <a href="chamado_fechar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-default" title="Fechar"><span class="fa fa-check-square-o" title="Finalizar"></span></a>
+                                            <a href="chamado_fechar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-success" title="Fechar"><span class="fa fa-check-square-o" title="Finalizar"></span></a>
                                         <?php
                                             }
                                         ?>
                                         <?php
                                             if($_SESSION['tipo_empresa_id'] != 3 && ($chamado['status_id'] != 5 && $chamado['status_id'] != 3 && $chamado['status_id'] != 6 && $chamado['status_id'] != 7)){
                                         ?>
-                                                <button value='cancelar' data-id="<?= $chamado['id']; ?>" data-numero="<?= $chamado['numero']; ?>" class="btn btn-sm btn-default cancelar" title="Cancelar"><i class="fa fa-times"></i></button>
+                                                <button value='cancelar' data-id="<?= $chamado['id']; ?>" data-numero="<?= $chamado['numero']; ?>" class="btn btn-sm btn-danger cancelar" title="Cancelar"><i class="fa fa-times"></i></button>
                                         <?php
                                             }
                                         ?>
@@ -272,11 +335,51 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 } else {
                                     $filtro_get = '';
                                 }
-                                for ($i=1; $i <= $db->totalPages; $i++) {
-                                    if($i == $pag){
-                                        echo "<li class='active'><a href='chamados.php?pag={$i}{$filtro_get}'>{$i}</a></li>";
-                                    } else {
-                                        echo "<li><a href='chamados.php?pag={$i}{$filtro_get}'>{$i}</a></li>";
+                                if(empty($chamados)){
+                                    # NADA
+                                } else if($db->totalPages > 5 && $pag == 1){
+                                    $pag_posterior = $pag+1;
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages > 5 && $pag == 2) {
+                                    $pag_posterior = $pag+1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages > 5 && $pag > 3 && $pag < $db->totalPages-1){
+                                    $pag_anterior = $pag-1;
+                                    $pag_posterior = $pag+1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages > 5 && $pag == $db->totalPages){
+                                    $pag_anterior = $pag-1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                } else if($db->totalPages > 5 && $pag == $db->totalPages-1){
+                                    $pag_anterior = $pag-1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else {
+                                    for ($i=1; $i <= $db->totalPages; $i++) {
+                                        if($i == $pag){
+                                            echo "<li class='active'><a href='chamados.php?pag={$i}{$filtro_get}'>{$i}</a></li>";
+                                        } else {
+                                            echo "<li><a href='chamados.php?pag={$i}{$filtro_get}'>{$i}</a></li>";
+                                        }
                                     }
                                 }
                             ?>

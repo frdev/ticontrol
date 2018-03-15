@@ -65,6 +65,7 @@ require_once 'functions/session.php';
                                 if($_SESSION['tipo_empresa_id'] == 3){
                                 ?>
                                 <li><a href="chamados-faturados.php"><i class="fa fa-usd" aria-hidden="true"></i> Faturados</a></li>
+                                <li><a href="chamados-a-faturar.php"><i class="fa fa-usd" aria-hidden="true"></i> A Faturar</a></li>
                                 <?php
                                 }
                                 ?>

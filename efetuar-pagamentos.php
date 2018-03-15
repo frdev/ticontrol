@@ -25,7 +25,8 @@ if(isset($_GET) && !empty($_GET['tipo_filtro']) && !empty($_GET['filtro'])){
             break;
     }
 }
-$pagamentos = $db->arraybuilder()->paginate('pagamentos p', $pag, 'p.*, e.nome_fantasia, SUM(c.valor) as valor');
+$db->groupBy('p.id');
+$pagamentos = $db->arraybuilder()->paginate('pagamentos p', $pag, 'p.*, e.nome_fantasia');
 ?>
 <div class="container">
     <br>
@@ -123,7 +124,6 @@ $pagamentos = $db->arraybuilder()->paginate('pagamentos p', $pag, 'p.*, e.nome_f
                             <td><strong>Técnico</strong></td>
                             <td><strong>Data</strong></td>
                             <td><strong>Período</strong></td>
-                            <td><strong>Valor</strong></td>
                             <td><strong>Ações</strong></td>
                         </thead>
                         <tbody>
@@ -135,7 +135,6 @@ $pagamentos = $db->arraybuilder()->paginate('pagamentos p', $pag, 'p.*, e.nome_f
                                     <td class='text-center'><?=$pagamento['nome_fantasia']?></td>
                                     <td class='text-center'><?=date('d/m/Y', strtotime($pagamento['data']))?></td>
                                     <td class='text-center'><?=date('d/m/Y', strtotime($pagamento['periodo_ini']))?> à <?=date('d/m/Y', strtotime($pagamento['periodo_fim']))?></td>
-                                    <td class='text-center'><?=number_format($pagamento['valor'], 2, ',', '.')?></td>
                                     <td class='text-center'><a href="pagamento-visualizar.php?id=<?= $pagamento['id']; ?>" class="btn btn-sm btn-default" title="Visualizar"><i class="fa fa-search-plus"></i></a></td>
                                 </tr>
                             <?php
