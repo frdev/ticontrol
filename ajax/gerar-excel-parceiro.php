@@ -21,9 +21,9 @@ $arquivo = 'Chamados -'.$empresa['nome_fantasia'].' - '.$data_ini.' a '.$data_fi
 # Recupera dados do chamado de acordo com o periodo e empresa
 # Monta os join's
 if(!empty($dados['rel_empresa'])){
-  $db->where('c.empresa_close_id', $dados['rel_empresa']);
+  $db->where('c.empresa_open_id', $dados['rel_empresa']);
 } else {
-  $db->where('c.empresa_close_id', $_SESSION['empresa_id']);
+  $db->where('c.empresa_open_id', $_SESSION['empresa_id']);
 }
 $db->where('c.data_atendimento', $dados['rel_data_ini'], '>=');
 $db->where('c.data_atendimento', $dados['rel_data_fim'], '<=');
@@ -48,22 +48,6 @@ $chamados = $db->get("chamados c", null, $campos);
 $html         = "";
 $html        .= "<table border='1'>";
 $html        .= "<tr>";
-$html        .= "<td>BANCO</td>";
-$html        .= "<td>TIPO</td>";
-$html        .= "<td>AGENCIA</td>";
-$html        .= "<td>CONTA</td>";
-$html        .= "</tr>";
-$html        .= "<tr>";
-$html        .= "<td>".$empresa['banco']."</td>";
-$html        .= "<td>".utf8_decode($empresa['tipo_conta'])."</td>";
-$html        .= "<td>".$empresa['agencia']."</td>";
-$html        .= "<td>".$empresa['conta']."</td>";
-$html        .= "</tr>";
-$html        .= "<tr>";
-$html        .= "</tr>";
-$html        .= "</table>";
-$html        .= "<table border='1'>";
-$html        .= "<tr>";
 $html        .= "<td><strong>Projeto</strong></td>";
 $html        .= "<td><strong>Chamado</strong></td>";
 $html        .= "<td><strong>Status</strong></td>";
@@ -73,18 +57,12 @@ $html        .= "<td><strong>Hora ".utf8_decode("Início")."</strong></td>";
 $html        .= "<td><strong>Hora ".utf8_decode("Término")."</strong></td>";
 $html        .= "<td><strong>RAT</strong></td>";
 $html        .= "<td><strong>".utf8_decode("Descrição")."</strong></td>";
-if($_SESSION['tipo_empresa_id'] != 2){
-  $html        .= "<td><strong>Valor</strong></td>";
+$html        .= "<td><strong>Valor Chamado</strong></td>";
+if($_SESSION['tipo_empresa_id'] == 1){
+  $html        .= "<td><strong>Valor Pago</strong></td>";
+  $html        .= "<td><strong>Lucro</strong></td>";
 }
 $html        .= "</tr>";
-$valor_total       = 0;
-$abertos           = 0;
-$finalizados       = 0;
-$pagos             = 0;
-$cancelados        = 0;
-$valor_finalizados = 0;
-$valor_pagos       = 0;
-$pendentes_fecha   = 0;
 foreach($chamados as $chamado){
    $html .= "<tr>";
    $html .= "<td>" . utf8_decode($chamado['p_descricao']) . "</td>";
@@ -100,58 +78,12 @@ foreach($chamados as $chamado){
     $html .= "<td>NAO</td>";
    }
    $html        .= "<td>" . utf8_decode($chamado['obs_close']) . "</td>";
-   if($_SESSION['tipo_empresa_id'] != 2){
+   $html        .= "<td>" . $chamado['valor_recebido'] . "</td>";
+   if($_SESSION['tipo_empresa_id'] == 1){
     $html        .= "<td>" . $chamado['valor'] . "</td>";
-   }
-   $abertos++;
-   $valor_total = $valor_total+$chamado['valor'];
-   if($chamados['status_id'] != 3 && $chamados['status_id'] != 7 && $chamados['status_id'] != 4){
-    $pendentes_fecha++;
-    $valor_pendentes_fecha = $valor_pendentes_fecha+$chamados['valor'];
-   }
-   switch($chamado['status_id']){
-    case 3:
-      $valor_finalizados = $valor_finalizados+$chamado['valor'];
-      $finalizados++;
-      break;
-    case 4:
-      $cancelados++;
-      break;
-    case 7:
-      $valor_finalizados = $valor_finalizados+$chamado['valor'];
-      $valor_pagos       = $valor_pagos+$chamado['valor'];
-      $finalizados++;
-      $pagos++;
-      break;
+    $html        .= "<td>" . ($chamado['valor_recebido']-$chamado['valor']) . "</td>";
    }
    $html        .= "</tr>";
-}
-$vtotal          = number_format($valor_total, 2, ',', '.');
-$vfinalizados    = number_format($valor_finalizados, 2, ',', '.');
-$vpagos          = number_format($valor_pagos, 2, ',', '.');
-$vpendente       = number_format($valor_finalizados-$valor_pagos, 2, ',', '.');
-$vpendentefecha  = number_format($valor_pendentes_fecha, 2, ',', '.');
-$html           .= "<tr></tr>";
-$html           .= "<tr><td></td><td><strong>".utf8_decode("Período").":</strong></td><td>".$data_ini."</td><td>".$data_fim."</td></tr>";
-$html           .= "<tr><td></td><td><strong>Total Chamados:</strong></td><td>".$abertos."</td>";
-if($_SESSION['tipo_empresa_id'] != 2){
-  $html .= "<td> R$".$vtotal."</td></tr>";
-} else {
-    $html .= "</tr>";
-}
-$html           .= "<tr><td></td><td><strong>Cancelados:</strong></td><td>".$cancelados."</td></tr>";
-$html           .= "<tr><td></td><td><strong>Finalizados:</strong></td><td>".$finalizados."</td>";
-if($_SESSION['tipo_empresa_id'] != 2){
-  $html .= "<td> R$".$vfinalizados."</td></tr>";
-} else {
-    $html .= "</tr>";
-}
-if($_SESSION['tipo_empresa_id'] != 2){
-  $html .= "<tr><td></td><td><strong>Pagos:</strong></td><td>".$pagos."</td><td>R$ ".$vpagos."</td></tr>";
-  $html .= "<tr><td></td><td><strong>Pendentes de fechamento:</strong></td><td>".$pendentes_fecha."</td><td>R$ ".$valor_pendentes_fecha."</td></tr>";
-  $html .= "<tr><td></td><td><strong>Pendentes para pagamento (Finalizados-Pagos):</strong></td><td>".($finalizados-$pagos)."</td><td>R$ ".$vpendente."</td></tr>";
-} else {
-    $html .= "</tr>";
 }
 $html .= "</table>";
 // Configurações header para forçar o download

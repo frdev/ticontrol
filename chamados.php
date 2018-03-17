@@ -227,9 +227,6 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 <td><strong>Local</strong></td>
                                 <td><strong>Data</strong></td>
                                 <td><strong>Período</strong></td>
-                                <?php if($_SESSION['tipo_empresa_id'] == 1){ ?>
-                                <td><strong>Valor</strong></td>
-                                <?php } ?>
                                 <?php if($_SESSION['tipo_empresa_id'] != 2){ ?>
                                 <td><strong>Pago</strong></td>
                                 <?php } ?>
@@ -261,9 +258,6 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                     <td style="vertical-align: middle !important;"><?= $chamado['cidade'].'/'.$chamado['uf'] ?></td>
                                     <td style="vertical-align: middle !important;"><?= date('d/m/Y', strtotime($chamado['data_atendimento'])); ?></td>
                                     <td style="vertical-align: middle !important;"><?= $chamado['pc_descricao'] ?></td>
-                                    <?php if($_SESSION['tipo_empresa_id'] == 1){ ?>
-                                    <td style="vertical-align: middle !important;"><?= number_format($chamado['valor_recebido'], 2, ',', '.'); ?></td>
-                                    <?php } ?>
                                     <?php if($_SESSION['tipo_empresa_id'] != 2){ ?>
                                     <td style="vertical-align: middle !important;"><?= number_format($chamado['valor'], 2, ',', '.'); ?></td>
                                     <?php } ?>
@@ -280,7 +274,7 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                         <?php
                                             if($_SESSION['tipo_empresa_id'] == 1 && $chamado['status_id'] == 1){
                                         ?>
-                                                <a href="chamado_roteirizar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-default" title="Roteirizar"><i class="fa fa-share"></i></a>
+                                                <a href="chamado_roteirizar.php?id=<?= $chamado['id']; ?>" class="btn btn-sm btn-info" title="Roteirizar"><i class="fa fa-share"></i></a>
                                         <?php
                                             }
                                         ?>
@@ -319,7 +313,16 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 }
                             } else {
                                 ?>
-                                <td colspan="9" class="text-center"><span class="text-danger"><strong>Não existe chamados para o filtro aplicado.</strong></span></td>
+                                <?php
+                                if($_SESSION['tipo_empresa_id'] == 1){
+                                    $colspan = 10;
+                                } else if($_SESSION['tipo_empresa_id'] == 2) {
+                                    $colspan = 8;
+                                } else {
+                                    $colspan = 9;
+                                }
+                                ?>
+                                <td colspan="<?=$colspan?>" class="text-center"><span class="text-danger"><strong>Não existe chamados para o filtro aplicado.</strong></span></td>
                                 <?php
                             }
                             ?>
@@ -337,20 +340,28 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                 }
                                 if(empty($chamados)){
                                     # NADA
-                                } else if($db->totalPages > 5 && $pag == 1){
+                                } else if($db->totalPages >= 4 && $pag == 1){
                                     $pag_posterior = $pag+1;
                                     echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
                                     echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
                                     echo "<li><a href='#'>...</a></li>";
                                     echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
-                                } else if($db->totalPages > 5 && $pag == 2) {
+                                } else if($db->totalPages >= 4 && $pag == 2) {
                                     $pag_posterior = $pag+1;
                                     echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
                                     echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
                                     echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
                                     echo "<li><a href='#'>...</a></li>";
                                     echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
-                                } else if($db->totalPages > 5 && $pag > 3 && $pag < $db->totalPages-1){
+                                } else if($db->totalPages >= 4 && $pag == 3){
+                                    $pag_posterior = $pag+1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li><a href='chamados.php?pag=2{$filtro_get}'>2</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages >= 4 && $pag > 3 && $pag < $db->totalPages-1){
                                     $pag_anterior = $pag-1;
                                     $pag_posterior = $pag+1;
                                     echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
@@ -360,19 +371,28 @@ $chamados = $db->arraybuilder()->paginate("chamados c", $pag, $campos);
                                     echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
                                     echo "<li><a href='#'>...</a></li>";
                                     echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
-                                } else if($db->totalPages > 5 && $pag == $db->totalPages){
-                                    $pag_anterior = $pag-1;
+                                } else if($db->totalPages >= 4 && $pag == $db->totalPages-2){
+                                    $pag_anterior  = $pag-1;
+                                    $pag_posterior = $pag+1;
                                     echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
                                     echo "<li><a href='#'>...</a></li>";
-                                    echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_anterior1}{$filtro_get}'>{$pag_anterior1}</a></li>";
                                     echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
-                                } else if($db->totalPages > 5 && $pag == $db->totalPages-1){
+                                    echo "<li><a href='chamados.php?pag={$pag_posterior}{$filtro_get}'>{$pag_posterior}</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages >= 4 && $pag == $db->totalPages-1){
                                     $pag_anterior = $pag-1;
                                     echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
                                     echo "<li><a href='#'>...</a></li>";
                                     echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
                                     echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
                                     echo "<li><a href='chamados.php?pag={$db->totalPages}{$filtro_get}'>{$db->totalPages}</a></li>";
+                                } else if($db->totalPages >= 4 && $pag == $db->totalPages){
+                                    $pag_anterior = $pag-1;
+                                    echo "<li><a href='chamados.php?pag=1{$filtro_get}'>1</a></li>";
+                                    echo "<li><a href='#'>...</a></li>";
+                                    echo "<li><a href='chamados.php?pag={$pag_anterior}{$filtro_get}'>{$pag_anterior}</a></li>";
+                                    echo "<li class='active'><a href='chamados.php?pag={$pag}{$filtro_get}'>{$pag}</a></li>";
                                 } else {
                                     for ($i=1; $i <= $db->totalPages; $i++) {
                                         if($i == $pag){
