@@ -17,7 +17,7 @@
         <div class="container tela-login">
             <div class="row">
                 <div class="col-md-offset-4 col-md-4 col-md-offset-4 text-center">
-                    <img src="img/logo.png" style="width: 75%; height: 37.5%;"/>
+                    <img src="img/logo.png" style="width: 100%; height: 37.5%;"/>
                 </div>
                 <form method="POST" action="#" id="formLogin">
                     <div class="col-md-offset-4 col-md-4 col-md-offset-4 painel-login">
